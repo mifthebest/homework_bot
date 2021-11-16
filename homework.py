@@ -28,10 +28,8 @@ HOMEWORK_STATUSES = {
 }
 
 
-logging.basicConfig(
-        format='%(asctime)s [%(levelname)s] %(message)s',
-        level=logging.DEBUG,
-    )
+logging.basicConfig(format='%(asctime)s [%(levelname)s] %(message)s',
+                    level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 handler = StreamHandler(sys.stdout)
 logger.addHandler(handler)
@@ -41,15 +39,17 @@ last_message = ''
 
 def send_message(bot, message):
     """Отправка сообщений в чат пользователя"""
+
     try:
         bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message)
         logger.info(f'Удачная отправка сообщения: {message}')
-    except:
+    except Exception:
         logger.error(f'Сбой при отправке сообщения: {message}')
 
 
 def get_api_answer(current_timestamp):
     """Получение ответа от API  приведение его к типам данных Python"""
+
     timestamp = current_timestamp or int(time.time())
     params = {'from_date': timestamp}
     headers = {
@@ -61,7 +61,7 @@ def get_api_answer(current_timestamp):
             headers=headers,
             params=params
         )
-    except:
+    except Exception:
         logger.error('Сбой при запросе к эндпоинту')
         raise ErrEndpointRequest('Сбой при запросе к эндпоинту')
     else:
@@ -76,6 +76,7 @@ def get_api_answer(current_timestamp):
 
 def check_response(response):
     """Проверка корректности ответа API"""
+
     if type(response) is not dict:
         raise ErrType('Ответ API не приведён к типу dict')
     else:
@@ -93,6 +94,7 @@ def check_response(response):
 
 def parse_status(homework):
     """Парсинг ответа API и формирование сообщения для пользователя"""
+
     homework_name = homework.get('homework_name')
     if not homework_name:
         logger.error('Отсутствие ключа "homework_name" в ответе API')
@@ -119,11 +121,13 @@ def parse_status(homework):
 
 def check_tokens():
     """Проверка переменных среды"""
+
     return bool(PRACTICUM_TOKEN and TELEGRAM_TOKEN and TELEGRAM_CHAT_ID)
 
 
 def main():
     """Основная логика работы бота."""
+
     if not check_tokens():
         logger.critical('Отсутствие обязательных переменных окружения')
         exit(0)
