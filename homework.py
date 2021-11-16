@@ -119,7 +119,7 @@ def parse_status(homework):
 
 
 def check_tokens():
-    """Проверка переменных среды"""
+    """Проверка переменных среды""" 
     return bool(PRACTICUM_TOKEN and TELEGRAM_TOKEN and TELEGRAM_CHAT_ID)
 
 
