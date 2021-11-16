@@ -38,8 +38,8 @@ last_message = ''
 
 
 def send_message(bot, message):
-    """Отправка сообщений в чат пользователя"""
 
+    """Отправка сообщений в чат пользователя"""
     try:
         bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message)
         logger.info(f'Удачная отправка сообщения: {message}')
@@ -48,8 +48,8 @@ def send_message(bot, message):
 
 
 def get_api_answer(current_timestamp):
-    """Получение ответа от API  приведение его к типам данных Python"""
 
+    """Получение ответа от API  приведение его к типам данных Python"""
     timestamp = current_timestamp or int(time.time())
     params = {'from_date': timestamp}
     headers = {
@@ -68,15 +68,15 @@ def get_api_answer(current_timestamp):
         if homework_statuses.status_code != 200:
             logger.error('Недоступность эндпоинта')
             raise ErrStatusCode(
-                f'Ответ API олучен со статусом {homework_statuses.status_code}'
+                f'Ответ API получен со статусом {homework_statuses.status_code}'
             )
         else:
             return homework_statuses.json()
 
 
 def check_response(response):
-    """Проверка корректности ответа API"""
 
+    """Проверка корректности ответа API"""
     if type(response) is not dict:
         raise ErrType('Ответ API не приведён к типу dict')
     else:
@@ -93,8 +93,8 @@ def check_response(response):
 
 
 def parse_status(homework):
-    """Парсинг ответа API и формирование сообщения для пользователя"""
 
+    """Парсинг ответа API и формирование сообщения для пользователя"""
     homework_name = homework.get('homework_name')
     if not homework_name:
         logger.error('Отсутствие ключа "homework_name" в ответе API')
@@ -120,14 +120,14 @@ def parse_status(homework):
 
 
 def check_tokens():
-    """Проверка переменных среды"""
 
+    """Проверка переменных среды"""
     return bool(PRACTICUM_TOKEN and TELEGRAM_TOKEN and TELEGRAM_CHAT_ID)
 
 
 def main():
-    """Основная логика работы бота."""
 
+    """Основная логика работы бота."""
     if not check_tokens():
         logger.critical('Отсутствие обязательных переменных окружения')
         exit(0)
