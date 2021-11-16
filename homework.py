@@ -38,7 +38,9 @@ last_message = ''
 
 
 def send_message(bot, message):
-    """Отправка сообщений в чат пользователя"""
+    """
+    Отправка сообщений в чат пользователя
+    """
     try:
         bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message)
         logger.info(f'Удачная отправка сообщения: {message}')
@@ -47,7 +49,9 @@ def send_message(bot, message):
 
 
 def get_api_answer(current_timestamp):
-    """Получение ответа от API  приведение его к типам данных Python"""
+    """
+    Получение ответа от API  приведение его к типам данных Python
+    """
     timestamp = current_timestamp or int(time.time())
     params = {'from_date': timestamp}
     headers = {
@@ -119,7 +123,7 @@ def parse_status(homework):
 
 
 def check_tokens():
-    """Проверка переменных среды""" 
+    """Проверка переменных среды"""
     return bool(PRACTICUM_TOKEN and TELEGRAM_TOKEN and TELEGRAM_CHAT_ID)
 
 
