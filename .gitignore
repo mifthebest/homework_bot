@@ -150,3 +150,5 @@ static/
 posts/static/
 media/
 
+# папки с логами
+logger.log

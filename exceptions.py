@@ -1,14 +1,8 @@
-class ErrStatusCode(Exception):
+class StatusCodeError(Exception):
+    """Код возврата API отличен от 200"""
     pass
 
 
-class ErrEndpointRequest(Exception):
-    pass
-
-
-class ErrNonKey(KeyError):
-    pass
-
-
-class ErrType(TypeError):
+class ServerError(Exception):
+    """Ошибка на сервере"""
     pass
