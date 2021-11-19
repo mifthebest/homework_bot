@@ -209,9 +209,9 @@ def main():
             logger.exception(error)
 
             if (
-                    last_homework != now_homework or
-                    message != last_message or
-                    last_message == ''
+                    last_homework != now_homework
+                    or message != last_message
+                    or last_message == ''
             ):
                 last_message = send_message(bot, message)
                 last_homework = now_homework.copy()
