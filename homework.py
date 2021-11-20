@@ -9,7 +9,7 @@ import requests
 import telegram
 from dotenv import load_dotenv
 
-from exceptions import StatusCodeError, ServerError
+from exceptions import StatusCodeError, ServerError, NotExistEnvVarError
 
 
 load_dotenv()
@@ -107,13 +107,16 @@ def send_message(bot, message):
 
 def get_api_answer(timestamp):
     """Получение ответа от API  приведение его к типам данных Python."""
-    params = {'from_date': timestamp}
-    request_args = dict(url=URL, headers=HEADERS, params=params)
+    request_args = dict(
+        url=URL,
+        headers=HEADERS,
+        params={'from_date': timestamp}
+    )
 
     try:
         homework_statuses = requests.get(**request_args)
     except requests.RequestException as error:
-        raise IOError(
+        raise ConnectionError(
             ERROR_REQUEST_TO_ENDPOINT_MESSAGE.format(
                 error=error,
                 **request_args
@@ -176,14 +179,22 @@ def parse_status(homework):
 
 def check_tokens():
     """Проверка переменных среды."""
-    return bool(PRACTICUM_TOKEN and TELEGRAM_TOKEN and TELEGRAM_CHAT_ID)
+    result = True
+    critical_message = CRITICAL_HAVE_NOT_ENV_VAR_MESSAGE
+    for name in ('PRACTICUM_TOKEN', 'TELEGRAM_TOKEN', 'TELEGRAM_CHAT_ID'):
+        if not globals().get(name):
+            result = False
+            critical_message += f' {name}'
+
+    if not result:
+        logger.critical(critical_message)
+    return result
 
 
 def main():
     """Основная логика работы бота."""
     if not check_tokens():
-        logger.critical(CRITICAL_HAVE_NOT_ENV_VAR_MESSAGE)
-        return
+        raise NotExistEnvVarError(CRITICAL_HAVE_NOT_ENV_VAR_MESSAGE)
 
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     timestamp = int(time.time())
@@ -201,18 +212,15 @@ def main():
             else:
                 now_homework = homeworks[0].copy()
                 send_message(bot, parse_status(homeworks[0]))
-
-            timestamp = response.get('current_date', int(time.time()))
+            timestamp = response.get('current_date', timestamp)
 
         except Exception as error:
             message = ERROR_MESSAGE.format(error=error)
             logger.exception(error)
 
-            if (
-                    last_homework != now_homework
+            if (last_homework != now_homework
                     or message != last_message
-                    or last_message == ''
-            ):
+                    or last_message == ''):
                 last_message = send_message(bot, message)
                 last_homework = now_homework.copy()
 

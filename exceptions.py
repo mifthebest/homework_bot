@@ -6,3 +6,8 @@ class StatusCodeError(Exception):
 class ServerError(Exception):
     """Ошибка на сервере"""
     pass
+
+
+class NotExistEnvVarError(Exception):
+    """Отсутствуют обязательные переменные окружения"""
+    pass
